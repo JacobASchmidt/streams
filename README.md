@@ -3,7 +3,27 @@
 This package attempts to use an elegant (although potentially inefficient) approach to streams in go.
 
 ## Example
-### Hello World
+### Hello World (slice)
+```go
+func HelloWorld() streams.Stream[string] {
+        words := []string{"Hello", "To", "The", "World"}
+        msgs := streams.Filter(
+                streams.Elements(words),
+                func (s string) bool {
+                        return s == "Hello" || s == "World"
+                },
+        )
+        streams.ForEach(
+                msgs,
+                func(msg string) {
+                        fmt.Print(msg, " ")
+                },
+        )
+        //prints "Hello World"
+}
+```
+
+### Hello World (channels)
 ```go
 func HelloWorld() streams.Stream[string] {
         words := make(chan string)
@@ -12,6 +32,7 @@ func HelloWorld() streams.Stream[string] {
                 words <- "To"
                 words <- "The"
                 words <- "World"
+                close(words)
         }
         msgs := streams.Filter(
                 streams.Receive(words),
