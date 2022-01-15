@@ -57,6 +57,22 @@ func Alphabet() streams.Stream[rune] {
 	return streams.Range('a', 'z'+1)
 }
 ```
+
+### Alphabet (raw implementation)
+```go
+func Alphabet() streams.Stream[rune] {
+        r := 'a'
+        return func() (rune, bool) {
+                if r > 'z' {
+                        return Done[rune]()
+                }
+                next := r
+                r++
+                return More(next)
+        }
+}
+```
+
 ### Chunk
 ```go
 func Chunk[T any](source Stream[T], length int) Stream[[]T] {
