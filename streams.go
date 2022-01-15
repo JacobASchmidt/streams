@@ -28,11 +28,11 @@ func Recieve[T any, Chan ~chan T](c Chan) Stream[T] {
 
 func Map[A, B any](in Stream[A], f func(A) B) Stream[B] {
 	return func() (B, bool) {
-		next, done := in()
-		if done {
+		val, has_val := in()
+		if !has_val {
 			return Done[B]()
 		}
-		return More(f(next))
+		return More(f(val))
 	}
 }
 
