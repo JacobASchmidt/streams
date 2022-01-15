@@ -64,11 +64,11 @@ func Alphabet() streams.Stream[rune] {
         r := 'a'
         return func() (rune, bool) {
                 if r > 'z' {
-                        return Done[rune]()
+                        return streams.Done[rune]()
                 }
                 next := r
                 r++
-                return More(next)
+                return streams.More(next)
         }
 }
 ```
@@ -77,15 +77,15 @@ func Alphabet() streams.Stream[rune] {
 ```go
 func Chunk[T any](source Stream[T], length int) Stream[[]T] {
         return func() ([]T, bool) {
-                ret := Reduce(
-                        Zip(Range(0, length), source), []T{}, 
+                ret := streams.Reduce(
+                        streams.Zip(Range(0, length), source), []T{}, 
                         func(ret []T, p Pair[int, T]) []T {
                                 return append(ret, p.Second)
                 })
                 if len(ret) == 0 {
-                        return Done[T]()
+                        return streams.Done[T]()
                 }
-                return More(ret)
+                return streams.More(ret)
         }
 }
 
