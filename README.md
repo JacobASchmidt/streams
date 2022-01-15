@@ -147,9 +147,7 @@ func Chunk[T any, Source Stream[T]](source Source, length int) chunker[T, Source
         return  chuncker{source: source, slice: make([]T, length)}
 }
 ```
-This makes streams quite verbose to use, to the point where using them in production code could be quite a hassle. On top of this fact, there is a more annoying fact sometimes we want pointer receivers for streams, meaning that code even more ugly and hard to reason about. This is not ideal for extensibility.
-
-Note in the example above (and indeed in most examples of streams), creating one of these types usually requires capturing local variables (the source and length in this case, usally a source and some sort of predicate/function), creating one member method that allows to implement the interface, and creating some type of factory function. Note that using closure, we can acheive all of these things within one simple to read function
+Using functions instead leaves just
 
 ```go
 
