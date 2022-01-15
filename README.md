@@ -26,33 +26,6 @@ func HelloWorld() {
 }
 ```
 
-### Hello World (channels)
-```go
-func HelloWorld() {
-        words := make(chan string)
-        go func() {
-                words <- "Hello"
-                words <- "To"
-                words <- "The"
-                words <- "World"
-                close(words)
-        }
-        msgs := streams.Filter(
-                streams.Receive(words),
-                func (s string) bool {
-                        return s == "Hello" || s == "World"
-                },
-        )
-        streams.ForEach(
-                msgs,
-                func(msg string) {
-                        fmt.Print(msg, " ")
-                },
-        )
-        //prints "Hello World"
-}
-```
-
 ### Alphabet
 
 ```go
@@ -73,6 +46,20 @@ func Alphabet() streams.Stream[rune] {
                 r++
                 return streams.More(next)
         }
+}
+```
+
+### Alphanum
+
+```go
+func AlphaNum() streams.Stream[rune] {
+	return streams.Chain(
+		Alphabet(),
+		streams.Map(Alphabet(), func(r rune) rune {
+			return r - 'a' + 'A'
+		}),
+		streams.Range('0', '9'+1),
+	)
 }
 ```
 
