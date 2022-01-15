@@ -8,7 +8,7 @@ This package takes a novel approach to iterators which allows for more clear and
 ## Example
 ### Hello World (slice)
 ```go
-func HelloWorld() streams.Stream[string] {
+func HelloWorld() {
         words := []string{"Hello", "To", "The", "World"}
         msgs := streams.Filter(
                 streams.Elements(words),
@@ -28,7 +28,7 @@ func HelloWorld() streams.Stream[string] {
 
 ### Hello World (channels)
 ```go
-func HelloWorld() streams.Stream[string] {
+func HelloWorld() {
         words := make(chan string)
         go func() {
                 words <- "Hello"
