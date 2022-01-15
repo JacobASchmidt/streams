@@ -189,6 +189,7 @@ func Chunk[T any](source Stream[T], length int) Stream[[]T] {
 }
 
 ```
+I think there are clear advantages to function approach as compared to the interface approach (clear return type, clear input type, automatic captures, etc).
 
 Note that this implementation can often be slower unless go's escape analysis works miracles (which sometimes, it does). But, all and all, it is much more extensible and easy to reason about than other similar designs.
 
