@@ -4,7 +4,7 @@ This package attempts to use an elegant (although potentially inefficient) appro
 
 ## Yet another Iterator implementation, Why?
 
-This package takes a novel approach to iterators which allows for more clear and compact code as opposed to other apporaches. Look at alphabet raw example for a clear example of this distinction.
+This package takes a novel approach to iterators which allows for more clear and compact code as opposed to other apporaches. Other approaches create a unique type for every adapter, this approach uses closures. Look at alphabet raw example for a clear example of this distinction.
 ## Example
 ### Hello World (slice)
 ```go
