@@ -2,6 +2,9 @@
 
 This package attempts to use an elegant (although potentially inefficient) approach to streams in go.
 
+## Yet another Iterator implementation, Why?
+
+This package takes a novel approach to iterators which allows for more clear and compact code as opposed to other apporaches. Look at alphabet raw example for a clear example of this distinction.
 ## Example
 ### Hello World (slice)
 ```go
