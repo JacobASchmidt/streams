@@ -67,11 +67,16 @@ func Reduce[A, B any](s Stream[A], init B, f func(B, A) B) B {
 
 func Filter[T any](s Stream[T], f func(T) bool) Stream[T] {
 	return func() (T, bool) {
-		val, has_val := s()
-		if !has_val {
-			return Done[T]()
+
+		for {
+			val, has_val := s()
+			if !has_val {
+				return Done[T]()
+			}
+			if f(val) {
+				return More(val)
+			}
 		}
-		return val, f(val)
 	}
 }
 
