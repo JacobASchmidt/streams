@@ -152,3 +152,18 @@ func Enumerate[T any, Slice ~[]T](s Slice) Stream[IndexedValue[T]] {
 			return IndexedValue[T]{Index: p.First, Value: p.Second}
 		})
 }
+
+func Chain[T any](streams ...Stream[T]) Stream[T] {
+	i := 0
+	return func() (T, bool) {
+		for i < len(streams) {
+			val, has_val := streams[i]()
+			if !has_val {
+				i++
+				continue
+			}
+			return More(val)
+		}
+		return Done[T]()
+	}
+}
