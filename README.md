@@ -114,7 +114,11 @@ func More[T](t T) (T, bool) {
 ```
 In that implementation, the first return value rougly corresponds to the ```value``` type seen in other languages, and the second bool type corresponds to the discriminant, or ```has-value``` type from other languages.
 
-In dealing with "streams" from each of the above described languages, I have found that creating new streams is quite difficult. For each new operation on a stream, you often have to build a new struct that captures local variables and implements at minimum one method to fulfill the interface. 
+I will also use a quite unique approach of a stream of T being just a function that returns either Done or More, instead of an interface. This allows it to be easier to write custom adaptors.
+
+## Why use function instead of interface?
+
+In dealing with "streams" from each of the below described languages, I have found that creating new streams is quite difficult. For each new operation on a stream, you often have to build a new struct that captures local variables and implements at minimum one method to fulfill the interface. 
 
 For example, a "chunk-by" stream (which takes a streams and returns a streams of "chunks" of size n) would require quite a bit of boiler plate in any of the above approaches, looking something like this
 
