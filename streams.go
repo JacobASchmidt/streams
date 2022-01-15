@@ -1,5 +1,7 @@
 package streams
 
+import "constraints"
+
 func zero[T any]() T {
 	var t T
 	return t
@@ -11,19 +13,13 @@ func Done[T any]() (T, bool) { return zero[T](), false }
 
 type Stream[T any] func() (T, bool)
 
-func FromSlice[T any, Slice ~[]T](s Slice) Stream[T] {
-	i := 0
-	return func() (T, bool) {
-		if i == len(s) {
-			return Done[T]()
-		}
-		val := s[i]
-		i++
-		return More(val)
-	}
+func Elements[T any, Slice ~[]T](s Slice) Stream[T] {
+	return Map(Indices[T](s), func(i int) T {
+		return s[i]
+	})
 }
 
-func FromChan[T any, Chan ~chan T](c Chan) Stream[T] {
+func Recieve[T any, Chan ~chan T](c Chan) Stream[T] {
 	return func() (T, bool) {
 		val, has_val := <-c
 		return val, has_val
@@ -79,26 +75,15 @@ func Filter[T any](s Stream[T], f func(T) bool) Stream[T] {
 	}
 }
 
-func Range(a, b int) Stream[int] {
-	return func() (int, bool) {
+func Range[Int constraints.Integer](a, b Int) Stream[Int] {
+	return func() (Int, bool) {
 		if a == b {
-			return Done[int]()
+			return Done[Int]()
 		}
 		next := a
 		a++
 		return More(next)
 	}
-}
-
-func Fill[T any, Slice ~[]T](slice Slice, stream Stream[T]) {
-	ForEachControl(Indices[T](slice), func(i int) Control {
-		val, has_val := stream()
-		if !has_val {
-			return Break
-		}
-		slice[i] = val
-		return Continue
-	})
 }
 
 func Indices[T any, Slice ~[]T](s Slice) Stream[int] {
@@ -107,11 +92,11 @@ func Indices[T any, Slice ~[]T](s Slice) Stream[int] {
 
 func Iota() Stream[int] {
 	i := 0
-	return func() (int, bool) {
+	return Infinite(func() int {
 		next := i
 		i++
-		return More(next)
-	}
+		return next
+	})
 }
 
 type Pair[A, B any] struct {
@@ -133,10 +118,33 @@ func Zip[A, B any](a Stream[A], b Stream[B]) Stream[Pair[A, B]] {
 	}
 }
 
-func Take[T any](s Stream[T], i int) []T {
-	ret := []T{}
-	ForEach(Zip(s, Range(0, i)), func(p Pair[T, int]) {
-		ret = append(ret, p.First)
+func Infinite[T any](f func() T) Stream[T] {
+	return func() (T, bool) {
+		return More(f())
+	}
+}
+
+func Collect[T any](s Stream[T]) []T {
+	return Reduce(s, []T{}, func(ret []T, el T) []T {
+		return append(ret, el)
 	})
-	return ret
+}
+
+func Take[T any](s Stream[T], i int) []T {
+	return Reduce(Zip(Range(0, i), s), []T{}, func(ret []T, el Pair[int, T]) []T {
+		return append(ret, el.Second)
+	})
+}
+
+type IndexedValue[T any] struct {
+	Index int
+	Value T
+}
+
+func Enumerate[T any, Slice ~[]T](s Slice) Stream[IndexedValue[T]] {
+	return Map(
+		Zip(Indices[T](s), Elements[T](s)),
+		func(p Pair[int, T]) IndexedValue[T] {
+			return IndexedValue[T]{Index: p.First, Value: p.Second}
+		})
 }

@@ -3,7 +3,7 @@ package streams_test
 import (
 	"testing"
 
-	"github.com/JacobAlbertSchmidt/streams.git"
+	"github.com/JacobAlbertSchmidt/streams"
 )
 
 func TestStreams(t *testing.T) {
